@@ -43,7 +43,7 @@ const WelcomeModal = ({
           ×
         </button>
         <h2 className="text-xl font-semibold mb-4">Welcome!</h2>
-        <img src="/output.gif" alt="Welcome Animation" className="mx-auto my-2" />
+        <img src="/output_optimized.gif" alt="Welcome Animation" className="mx-auto my-2" />
         <p className="text-base">
           <span className="font-semibold">'Take1'</span> is a minimal writing app that
           explicitly prohibits deletion. Because when you're speaking in real life there are
