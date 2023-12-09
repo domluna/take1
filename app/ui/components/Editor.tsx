@@ -20,9 +20,9 @@ const Editor = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null); // Correctly typed ref
   const isEditingRef = useRef<boolean>(false);
-  const highlightRef = useRef(null);
+  const highlightRef = useRef<number | null>(null);
 
-  const highlightText = (start, end) => {
+  const highlightText = (start: number, end: number) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
@@ -43,7 +43,7 @@ const Editor = ({
         }
         isHighlighted = !isHighlighted;
       }
-    }, 500); // Blinking interval
+    }, 500) as unknown as number; 
   };
 
   useEffect(() => {
