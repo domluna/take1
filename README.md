@@ -1,3 +1,3 @@
 # Take1
 
-![Welcome Animation](/public/output_optimized.gif)
+![Welcome Animation](/public/aggressive_optimized_output.gif)
