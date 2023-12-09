@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Note, GroupedNotes } from "@/lib/types.d";
 import { createNewNote } from "@/lib/utils";
+import React from "react";
+
+type DateGroup = "Today" | "Yesterday" | "Previous 7 days" | "Previous 30 days";
 
 const Sidebar = ({
   notes,
@@ -67,19 +70,19 @@ const Sidebar = ({
     return acc;
   }, {});
 
-  const orderGroups = (group: string) => {
-    const order = {
+  const getOrder = (group: DateGroup) => {
+    const order: { [key in DateGroup]: number } = {
       Today: 1,
       Yesterday: 2,
       "Previous 7 days": 3,
       "Previous 30 days": 4,
     };
-    return order[group] || 5; // Groups after "Previous 30 days" will have a higher order
+    return order[group] || 5;
   };
 
   // Sorting the keys according to the defined order
   const sortedGroupKeys = Object.keys(groupedNotes).sort((a, b) => {
-    return orderGroups(a) - orderGroups(b);
+    return getOrder(a as DateGroup) - getOrder(b as DateGroup);
   });
 
   for (const group of sortedGroupKeys) {
@@ -109,13 +112,13 @@ const Sidebar = ({
     }
   };
 
-  const handleListItemKeyDown = (e, note) => {
+  const handleListItemKeyDown = (e: React.KeyboardEvent, note: Note) => {
     if (e.key === "Enter") {
       setActiveNote(note);
     }
   };
 
-  const handleDropdownKeyDown = (e, noteId) => {
+  const handleDropdownKeyDown = (e: React.KeyboardEvent, noteId: string) => {
     if (e.key === "Enter") {
       e.stopPropagation();
       handleDeleteNote(noteId);

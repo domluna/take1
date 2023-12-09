@@ -43,7 +43,7 @@ const Editor = ({
         }
         isHighlighted = !isHighlighted;
       }
-    }, 500) as unknown as number; 
+    }, 500) as unknown as number;
   };
 
   useEffect(() => {
