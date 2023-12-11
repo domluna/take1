@@ -55,9 +55,6 @@ const Editor = ({
     const terminalPunctuationRegex = /[.?!]\s*$/;
     const trailingNewlineRegex = /[\n]+\s*$/;
     const leadingNewlineRegex = /^\s*[\n]+/;
-    const trailingPunctuationRegex = /([^\w\s]+)(\s|\n{1,2})?$/;
-    const leadingPunctuationRegex = /^([^\w\s]+)(\s|\n{1,2})?/;
-    const trimRegex = /^[^\w\s]+|[^\w\s]+$/g;
 
     if (
       !(
@@ -93,24 +90,10 @@ const Editor = ({
         console.log("ok to edit");
         const trimmedTextToEdit = textToEdit.trimEnd();
 
-        // Capture leading punctuation
-        const leadingPunctuationMatch = trimmedTextToEdit.match(leadingPunctuationRegex);
-        const leadingPunctuation = leadingPunctuationMatch
-          ? leadingPunctuationMatch[0]
-          : "";
-
-        // Capture trailing punctuation
-        const trailingPunctuationMatch = trimmedTextToEdit.match(trailingPunctuationRegex);
-        const trailingPunctuation = trailingPunctuationMatch
-          ? trailingPunctuationMatch[0]
-          : "";
-
         const leadingNewlineMatch = trimmedTextToEdit.match(leadingNewlineRegex);
         const leadingNewline = leadingNewlineMatch ? leadingNewlineMatch[0] : "";
 
         console.log("matched leading newline", leadingNewline);
-        console.log("matched leading punctuation", leadingPunctuation);
-        console.log("matched trailing punctuation", trailingPunctuation);
 
         const selectionStart = lastEditedIndex;
         const selectionEnd = selectionStart + textToEdit.length;
@@ -126,8 +109,6 @@ const Editor = ({
         );
         console.log("original edited text", editedText);
 
-        editedText = editedText.replace(trimRegex, "");
-
         if (leadingNewline) {
           editedText = leadingNewline.slice(0, 2) + editedText;
         } else if (!"n ".includes(editedText[0])) {
@@ -136,15 +117,6 @@ const Editor = ({
 
         if ("!?.".includes(uneditedText.slice(-1))) {
           editedText = editedText[0].toUpperCase() + editedText.slice(1);
-        }
-
-        // Re-add leading punctuation if removed
-        if (leadingPunctuation) {
-          editedText = leadingPunctuation + editedText;
-        }
-        // Re-add trailing punctuation if removed
-        if (trailingPunctuation) {
-          editedText += trailingPunctuation;
         }
 
         const len = uneditedText.length + textToEdit.length;
