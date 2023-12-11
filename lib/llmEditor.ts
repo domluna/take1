@@ -1,4 +1,4 @@
-export async function edit(apiKey: string, text: string, context: string, signal?: AbortSignal) {
+export async function edit(apiKey: string, text: string, signal?: AbortSignal) {
   console.log(`Editing text: "${text}"`);
 
 
@@ -15,7 +15,7 @@ You will be given text that add some point will have special tokens marked [EDIT
 
   const userMessageContent = `Return revised version of the text in between [EDIT_START] and [EDIT_END]. DO NOT WRITE THESE TOKENS IN THE OUTPUT:
 
-  ${context}[EDIT_START]${text}[EDIT_END]`;
+  [EDIT_START]${text}[EDIT_END]`;
 
   const userMessage = {
     role: "user",
@@ -45,11 +45,5 @@ You will be given text that add some point will have special tokens marked [EDIT
   });
 
   const json = await resp.json();
-  let message = json.choices[0].message.content;
-
-  // if context is at start of the message, replace it with empty string
-  const contextRegex = new RegExp(`^${context}`);
-  message = message.replace(contextRegex, "");
-  
-  return message;
+  return json.choices[0].message.content;
 }

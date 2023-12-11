@@ -51,6 +51,9 @@ const Editor = ({
     const signal = abortController.signal;
     const content = activeNote.content;
     const lastEditedIndex = activeNote.lastEditedIndex;
+    const terminalPunctuationRegex = /[.?!]\s*$/;
+    // one or more newlines + optional whitespace
+    const newlineRegex = /[\n]+\s*$/;
 
     if (
       !(
@@ -70,20 +73,20 @@ const Editor = ({
         const uneditedText = content.slice(0, lastEditedIndex);
         const textToEdit = content.slice(lastEditedIndex);
 
-        // sample chunks of text don't edit well
-        if (textToEdit.trimEnd().length < 20) {
+        console.log("A", terminalPunctuationRegex.test(textToEdit));
+        console.log("B", newlineRegex.test(textToEdit));
+        if (
+          !(terminalPunctuationRegex.test(textToEdit) || newlineRegex.test(textToEdit)) ||
+          textToEdit.trim().length < 20 ||
+          textToEdit.trim().length === 0
+        ) {
+          console.log("not ok to edit");
           return;
         }
 
-        // we don't need to long context it's mainly for punctuation.
-        let context = uneditedText.slice(-10);
-        const wsIdx = context.indexOf(" ");
-        const nlIdx = context.lastIndexOf("\n");
-        if (nlIdx > wsIdx) {
-          context = context.slice(nlIdx + 1);
-        } else if (wsIdx > -1) {
-          context = context.slice(wsIdx + 1);
-        }
+        console.log("ok to edit");
+
+        const trimmedTextToEdit = textToEdit.trimEnd();
 
         // Match up to two leading newlines
         const leadingNewlinesMatch = content.slice(lastEditedIndex).match(/^(\n{0,2})/);
@@ -95,17 +98,11 @@ const Editor = ({
           leadingWS = leadingWhitespaceMatch ? leadingWhitespaceMatch[0] : "";
         }
 
-        if (textToEdit.trim().length === 0) {
-          return;
-        }
-
         const selectionStart = lastEditedIndex;
         const selectionEnd = selectionStart + textToEdit.length;
 
         // Start highlighting
         highlightText(selectionStart, selectionEnd);
-
-        const trimmedTextToEdit = textToEdit.trimEnd();
 
         // Capture leading punctuation
         const leadingPunctuationRegex = /^([^\w\s]+)(\s|\n{1,2})?/;
@@ -128,7 +125,6 @@ const Editor = ({
         let editedText = await edit(
           settings.openaiApiKey as string,
           trimmedTextToEdit,
-          context,
           signal,
         );
         console.log("original edited text", editedText);
@@ -155,6 +151,9 @@ const Editor = ({
           clearInterval(highlightRef.current);
           highlightRef.current = null;
         }
+
+        console.log("ws length", leadingWS.length);
+        console.log("new content", editedText);
 
         setActiveNote({
           ...activeNote,
@@ -220,6 +219,7 @@ const Editor = ({
         (e.key === "p" ||
           e.key === "n" ||
           e.key === "b" ||
+          e.key === "c" ||
           e.key === "f" ||
           e.key === "a" ||
           e.key === "e"));
