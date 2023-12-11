@@ -169,7 +169,7 @@ const Editor = ({
       } finally {
         isEditingRef.current = false;
       }
-    }, 5000);
+    }, 3000);
 
     return () => {
       clearTimeout(timerId);
@@ -212,24 +212,24 @@ const Editor = ({
       "PageDown",
     ];
 
-    // Define special key combinations for navigation
-    const isNavigationCombo =
+    // Define special key combinations for navigation, copy and paste
+    const isAllowedKeyCombo =
       ((ctrlKey || altKey || metaKey) &&
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(
           e.key,
         )) ||
       ((ctrlKey || metaKey) && (e.key === "PageUp" || e.key === "PageDown")) ||
+      ((ctrlKey || metaKey) && (e.key === "c" || e.key === "v")) || // Copy and Paste for both Mac and Windows/Linux
       (ctrlKey &&
         (e.key === "p" ||
           e.key === "n" ||
           e.key === "b" ||
-          e.key === "c" ||
           e.key === "f" ||
           e.key === "a" ||
           e.key === "e"));
 
     // Allow standard navigation keys and special combinations
-    if (standardNavigationKeys.includes(e.key) || isNavigationCombo) {
+    if (standardNavigationKeys.includes(e.key) || isAllowedKeyCombo) {
       return;
     }
 
